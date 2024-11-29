@@ -11,6 +11,33 @@
 <button>Subscribe</button>
 
 <script>
+    let browserId = localStorage.get('uuid')
+    if (!browserId) {
+        browserId =  crypto.randomUUID();
+        localStorage.set('uuid', browserId);
+    }
+
+    const VAPID_KEY = 'BCiSnEQsqK9v7yQ-0X5XmN5iGZ7I1tClPMAq-jgj-n6B41bwcIM0OkXlAVJXLR7lVvDaLAhPMRsMWp2vh6syIdA';
+    const firebaseConfig = {
+        apiKey: 'AIzaSyD6bYLcfnfRApmuxCgOZ1MYp5Z1riFpiwA',
+        authDomain: 'oneinch-defi-wallet.firebaseapp.com',
+        databaseURL: 'https://oneinch-defi-wallet-default-rtdb.firebaseio.com',
+        projectId: 'oneinch-defi-wallet',
+        storageBucket: 'oneinch-defi-wallet.appspot.com',
+        messagingSenderId: '966229303750',
+        appId: '1:966229303750:web:cf232371a0abc8e6b212c7',
+        measurementId: 'G-0D949TV1F9',
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+
+    // `getMessaging` requests browser notifications permission under the hood so
+    // we enclose it in function to call when we will be ready
+    const initFirebaseBackgroundClient = (serviceWorkerRegistration) => {
+        const messaging = getMessaging(firebaseApp);
+        return getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration });
+    };
+
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
             .register('./service-worker.js')
@@ -18,9 +45,13 @@
                 reg.addEventListener('updatefound', () => {
                     console.log('[main]  Update Found')
                 })
+                return initFirebaseBackgroundClient(reg)
                 console.log('[main]  Registered')
             })
-            .catch((error) => console.error('[main]  Registration Failed:', error));
+            .catch((error) => console.error('[main]  Registration Failed:', error))
+            .then((token) => {
+                console.log('[main]  Token:', token)
+            });
     } else {
         console.error('[main] s are not supported in this browser.');
     }
@@ -28,11 +59,40 @@
     document.querySelector('button').addEventListener('click', () => {
         Notification.requestPermission().then((result) => {
             if (result === 'granted') {
-                setTimeout(() => {
-                    navigator.serviceWorker.ready.then((registration) => {
-                        registration.showNotification('Hello, World!');
+                this.initFirebaseBackgroundClient().then((token) => {
+                    const url =
+                        'https://wallet-push-staging.1inch.io/v3.0/subscribe';
+
+                    const payload = {
+                        mobileToken: browserId, // persistent uuid for browser (saved in Local storage)
+                        pushToken: token, // firebase token
+                        platform: 4, // 4 tells backend that platform is web app
+                        wallets: [],
+                        chains: [
+                            1, 56, 137, 250
+                        ],
+                        notifications: [],
+                        locale: 'en',
+                    };
+
+                    return fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    })
+                }).then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Failed to subscribe to notifications');
+                    }
+                    return response.json();
+                })
+                    .catch((error) => {
+                        console.error('Error during subscription:', error);
                     });
-                }, 3000)
+
+
             }
         });
     });

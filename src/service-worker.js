@@ -1,17 +1,17 @@
 try {
-    // importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js');
-    // importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging-compat.js');
+    importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js');
+    importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging-compat.js');
 
-    // const firebaseConfig = {
-    //     apiKey: 'AIzaSyD6bYLcfnfRApmuxCgOZ1MYp5Z1riFpiwA',
-    //     authDomain: 'oneinch-defi-wallet.firebaseapp.com',
-    //     databaseURL: 'https://oneinch-defi-wallet-default-rtdb.firebaseio.com',
-    //     projectId: 'oneinch-defi-wallet',
-    //     storageBucket: 'oneinch-defi-wallet.appspot.com',
-    //     messagingSenderId: '966229303750',
-    //     appId: '1:966229303750:web:cf232371a0abc8e6b212c7',
-    //     measurementId: 'G-0D949TV1F9',
-    // };
+    const firebaseConfig = {
+        apiKey: 'AIzaSyD6bYLcfnfRApmuxCgOZ1MYp5Z1riFpiwA',
+        authDomain: 'oneinch-defi-wallet.firebaseapp.com',
+        databaseURL: 'https://oneinch-defi-wallet-default-rtdb.firebaseio.com',
+        projectId: 'oneinch-defi-wallet',
+        storageBucket: 'oneinch-defi-wallet.appspot.com',
+        messagingSenderId: '966229303750',
+        appId: '1:966229303750:web:cf232371a0abc8e6b212c7',
+        measurementId: 'G-0D949TV1F9',
+    };
 
     self.addEventListener('install', (event) => {
         console.log('[sw] : Installing...');
@@ -27,28 +27,28 @@ try {
         console.log('[sw]: Fetching', event.request.url);
     });
 
-    // const app = firebase.initializeApp(firebaseConfig);
-    //
-    // const messaging = firebase.messaging();
-    //
+    const app = firebase.initializeApp(firebaseConfig);
+
+    const messaging = firebase.messaging();
+
     const scopeUrl = self.registration.scope;
     const dappOrigin = new URL(scopeUrl).origin;
-    //
-    // messaging.onBackgroundMessage((payload) => {
-    //     if (payload.data.type !== 'cross-chain') {
-    //         return;
-    //     }
-    //
-    //     const notificationTitle = 'Title';
-    //     const url = self.registration.scope;
-    //     console.log('[sw] : url', url, ' oroigin', dappOrigin);
-    //     const notificationOptions = {
-    //         body: 'url: ' + dappOrigin,
-    //         icon: 'https://1inch.io/img/pressRoom/1inch_without_text.webp',
-    //     };
-    //
-    //     self.registration.showNotification(notificationTitle, notificationOptions);
-    // });
+
+    messaging.onBackgroundMessage((payload) => {
+        if (payload.data.type !== 'cross-chain') {
+            return;
+        }
+
+        const notificationTitle = 'Title';
+        const url = self.registration.scope;
+        console.log('[sw] : url', url, ' oroigin', dappOrigin);
+        const notificationOptions = {
+            body: 'url: ' + dappOrigin,
+            icon: 'https://1inch.io/img/pressRoom/1inch_without_text.webp',
+        };
+
+        self.registration.showNotification(notificationTitle, notificationOptions);
+    });
 
     self.addEventListener('notificationclick', (event) => {
         event.waitUntil(
