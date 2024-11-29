@@ -13,7 +13,7 @@
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-            .register('./service-workers-test/service-worker.js')
+            .register('./service-worker.js')
             .then((reg) => {
                 reg.addEventListener('updatefound', () => {
                     console.log('[main]  Update Found')
