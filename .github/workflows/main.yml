@@ -32,6 +32,12 @@ jobs:
           cp *.js dist/
           ls -la dist
 
+      - name: Gzip files
+        run: |
+          find dist -type f -exec gzip -k {} \;
+          echo "Files in dist after gzip:"
+          ls -la dist
+
       - name: Upload dist folder
         uses: actions/upload-artifact@v3
         with:
