@@ -39,6 +39,12 @@ jobs:
           echo "Files in dist after gzip:"
           ls -la dist
 
+      - name: Set file permissions
+        run: |
+          chmod -R a+rX dist
+          echo "Permissions set for dist folder:"
+          ls -la dist
+
       - name: Upload dist folder
         uses: actions/upload-artifact@v3
         with:
