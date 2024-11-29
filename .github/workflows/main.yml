@@ -35,6 +35,7 @@ jobs:
       - name: Gzip files
         run: |
           find dist -type f -exec gzip -k {} \;
+          find dist -type f ! -name "*.gz" -delete
           echo "Files in dist after gzip:"
           ls -la dist
 
