@@ -16,7 +16,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Deployment job
   deploy:
     environment:
       name: github-pages
@@ -26,13 +25,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Copy files to dist
+      - name: Prepare dist folder
         run: |
           mkdir -p dist
           cp index.html dist/
           cp *.js dist/
+          ls -la dist
 
-      - name: Upload static files from dist
+      - name: Upload dist folder
         uses: actions/upload-artifact@v3
         with:
           name: dist-files
