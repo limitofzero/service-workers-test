@@ -28,7 +28,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: static-files
-          path: ./ # Adjust this to the directory containing your `index.html` and `*.js` files
+          path: |
+            index.html
+            *.js
 
       - name: Deploy to GitHub Pages
         id: deployment
