@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ["main"]
+
   workflow_dispatch:
 
 permissions:
@@ -15,25 +16,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Deployment job
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Upload static files
+      - name: Copy files to dist
+        run: |
+          mkdir -p dist
+          cp index.html dist/
+          cp *.js dist/
+
+      - name: Upload static files from dist
         uses: actions/upload-artifact@v3
         with:
-          name: static-files
-          path: |
-            index.html
-            *.js
+          name: dist-files
+          path: dist/
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
         with:
-          artifact_name: static-files
+          artifact_name: dist-files
