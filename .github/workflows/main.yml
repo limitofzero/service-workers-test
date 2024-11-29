@@ -32,13 +32,6 @@ jobs:
           cp *.js dist/
           ls -la dist
 
-      - name: Gzip files
-        run: |
-          find dist -type f -exec gzip -k {} \;
-          find dist -type f ! -name "*.gz" -delete
-          echo "Files in dist after gzip:"
-          ls -la dist
-
       - name: Set file permissions
         run: |
           chmod -R 755 dist
