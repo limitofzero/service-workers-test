@@ -28,9 +28,11 @@
     document.querySelector('button').addEventListener('click', () => {
         Notification.requestPermission().then((result) => {
             if (result === 'granted') {
-                navigator.serviceWorker.ready.then((registration) => {
-                    registration.showNotification('Hello, World!');
-                });
+                setTimeout(() => {
+                    navigator.serviceWorker.ready.then((registration) => {
+                        registration.showNotification('Hello, World!');
+                    });
+                }, 3000)
             }
         });
     });
