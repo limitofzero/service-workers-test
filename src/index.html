@@ -9,8 +9,11 @@
 <h1>Welcome to the Service Worker Example</h1>
 <p>This is a simple demonstration of caching with a service worker.</p>
 <button>Subscribe</button>
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js'
 
-<script>
+    import { getMessaging, getToken } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-messaging.js'
+
     let browserId = localStorage.getItem('uuid')
     if (!browserId) {
         browserId =  crypto.randomUUID();
@@ -29,71 +32,73 @@
         measurementId: 'G-0D949TV1F9',
     };
 
-    const firebaseApp = initializeApp(firebaseConfig);
+    window.addEventListener('load', () => {
+        const firebaseApp = initializeApp(firebaseConfig);
 
-    // `getMessaging` requests browser notifications permission under the hood so
-    // we enclose it in function to call when we will be ready
-    const initFirebaseBackgroundClient = (serviceWorkerRegistration) => {
-        const messaging = getMessaging(firebaseApp);
-        return getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration });
-    };
+        // `getMessaging` requests browser notifications permission under the hood so
+        // we enclose it in function to call when we will be ready
+        const initFirebaseBackgroundClient = (serviceWorkerRegistration) => {
+            const messaging = getMessaging(firebaseApp);
+            return getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration });
+        };
 
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
-            .register('./service-worker.js')
-            .then((reg) => {
-                reg.addEventListener('updatefound', () => {
-                    console.log('[main]  Update Found')
-                })
-                return initFirebaseBackgroundClient(reg)
-                console.log('[main]  Registered')
-            })
-            .catch((error) => console.error('[main]  Registration Failed:', error))
-            .then((token) => {
-                console.log('[main]  Token:', token)
-            });
-    } else {
-        console.error('[main] s are not supported in this browser.');
-    }
-
-    document.querySelector('button').addEventListener('click', () => {
-        Notification.requestPermission().then((result) => {
-            if (result === 'granted') {
-                this.initFirebaseBackgroundClient().then((token) => {
-                    const url =
-                        'https://wallet-push-staging.1inch.io/v3.0/subscribe';
-
-                    const payload = {
-                        mobileToken: browserId, // persistent uuid for browser (saved in Local storage)
-                        pushToken: token, // firebase token
-                        platform: 4, // 4 tells backend that platform is web app
-                        wallets: [],
-                        chains: [
-                            1, 56, 137, 250
-                        ],
-                        notifications: [],
-                        locale: 'en',
-                    };
-
-                    return fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(payload),
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker
+                .register('./service-worker.js')
+                .then((reg) => {
+                    reg.addEventListener('updatefound', () => {
+                        console.log('[main]  Update Found')
                     })
-                }).then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Failed to subscribe to notifications');
-                    }
-                    return response.json();
+                    return initFirebaseBackgroundClient(reg)
+                    console.log('[main]  Registered')
                 })
-                    .catch((error) => {
-                        console.error('Error during subscription:', error);
-                    });
+                .catch((error) => console.error('[main]  Registration Failed:', error))
+                .then((token) => {
+                    console.log('[main]  Token:', token)
+                });
+        } else {
+            console.error('[main] s are not supported in this browser.');
+        }
+
+        document.querySelector('button').addEventListener('click', () => {
+            Notification.requestPermission().then((result) => {
+                if (result === 'granted') {
+                    this.initFirebaseBackgroundClient().then((token) => {
+                        const url =
+                            'https://wallet-push-staging.1inch.io/v3.0/subscribe';
+
+                        const payload = {
+                            mobileToken: browserId, // persistent uuid for browser (saved in Local storage)
+                            pushToken: token, // firebase token
+                            platform: 4, // 4 tells backend that platform is web app
+                            wallets: [],
+                            chains: [
+                                1, 56, 137, 250
+                            ],
+                            notifications: [],
+                            locale: 'en',
+                        };
+
+                        return fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(payload),
+                        })
+                    }).then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Failed to subscribe to notifications');
+                        }
+                        return response.json();
+                    })
+                        .catch((error) => {
+                            console.error('Error during subscription:', error);
+                        });
 
 
-            }
+                }
+            });
         });
     });
 </script>
