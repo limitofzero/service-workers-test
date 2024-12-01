@@ -23,7 +23,7 @@ const listenerFn = (event) => {
             if (clients.openWindow) {
                 // eslint-disable-next-line no-console
                 console.log('[sw] open ', clients);
-                return clients.openWindow(`/`);
+                return clients.openWindow(`${dappOrigin}/`);
             }
         })
     );
