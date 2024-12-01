@@ -70,18 +70,16 @@ try {
         const notificationTitle = 'Title';
         const url = self.registration.scope;
         console.log('[sw] : url', url, ' oroigin', dappOrigin);
+        console.log('isSucureContext', self.isSecureContext);
         const notificationOptions = {
             body: 'url: ' + dappOrigin,
             icon: 'https://1inch.io/img/pressRoom/1inch_without_text.webp',
         };
 
-        self.removeEventListener('notificationclick', listenerFn);
-        self.addEventListener('notificationclick', listenerFn);
-
         self.registration.showNotification(notificationTitle, notificationOptions);
     });
 
-
+    self.addEventListener('notificationclick', listenerFn);
 
 } catch (e) {
     console.error('[sw] : Error importing Firebase SDK', e);
