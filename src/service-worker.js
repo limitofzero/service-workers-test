@@ -51,27 +51,29 @@ try {
     });
 
     self.addEventListener('notificationclick', (event) => {
-        event.waitUntil(
-            clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-                // eslint-disable-next-line no-console
-                console.log('[sw] clientList', clientList);
-                // Check if there is any open dapp tab
-                for (let client of clientList) {
-                    if (client.url.includes(dappOrigin) && 'focus' in client) {
-                        // eslint-disable-next-line no-console
-                        console.log('[sw] focus ', client);
-                        return client.focus(); // Focus on the existing tab and break out of the loop
-                    }
-                }
-
-                // If no tab is open, open a new one
-                if (clients.openWindow) {
+        console.log('[sw] click on notifications ')
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            // eslint-disable-next-line no-console
+            console.log('[sw] clientList', clientList);
+            // Check if there is any open dapp tab
+            for (let client of clientList) {
+                if (client.url.includes(dappOrigin) && 'fgocus' in client) {
                     // eslint-disable-next-line no-console
-                    console.log('[sw] open ', clients);
-                    return clients.openWindow(`${dappOrigin}/`);
+                    console.log('[sw] focus ', client);
+                    return client.focus(); // Focus on the existing tab and break out of the loop
                 }
-            }),
-        );
+            }
+
+            // If no tab is open, open a new one
+            if (clients.openWindow) {
+                // eslint-disable-next-line no-console
+                console.log('[sw] open ', clients);
+                return clients.openWindow(`${dappOrigin}/`);
+            }
+        })
+        // event.waitUntil(
+        //
+        // );
     });
 
 } catch (e) {
