@@ -74,7 +74,7 @@ try {
                 }
             })
         );
-    });
+    };
 
 } catch (e) {
     console.error('[sw] : Error importing Firebase SDK', e);
