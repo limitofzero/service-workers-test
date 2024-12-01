@@ -71,7 +71,7 @@
                             mobileToken: browserId, // persistent uuid for browser (saved in Local storage)
                             pushToken: token, // firebase token
                             platform: 4, // 4 tells backend that platform is web app
-                            wallets: ['0xcd4060fa7b5164281f150fa290181401524ef76f'],
+                            wallets: ['0xcd4060fa7b5164281f150fa290181401524ef76f', '0x654D9c3D36cD3E4Ff19B08736B0101C799066F8E'].map((address) => ({ address, notifications: ['cross-chain'], access: 'full' })),
                             chains: [
                                 1, 56, 137, 250
                             ],
