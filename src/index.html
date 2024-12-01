@@ -63,7 +63,7 @@
         document.querySelector('button').addEventListener('click', () => {
             Notification.requestPermission().then((result) => {
                 if (result === 'granted') {
-                    this.initFirebaseBackgroundClient().then((token) => {
+                    initFirebaseBackgroundClient().then((token) => {
                         const url =
                             'https://wallet-push-staging.1inch.io/v3.0/subscribe';
 
