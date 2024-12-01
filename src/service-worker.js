@@ -22,8 +22,9 @@ const listenerFn = (event) => {
             // If no tab is open, open a new one
             if (clients.openWindow) {
                 // eslint-disable-next-line no-console
+                const url = self.registration.scope;
                 console.log('[sw] open ', clients);
-                return clients.openWindow(`${dappOrigin}/`);
+                return clients.openWindow(`${url}`);
             }
         })
     );
