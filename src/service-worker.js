@@ -51,7 +51,7 @@ try {
     });
 
     self.addEventListener('notificationclick', (event) => {
-        console.log('[sw] click on notifications ')
+        console.log('[sw] click on notifications ', event)
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
             // eslint-disable-next-line no-console
             console.log('[sw] clientList', clientList);
