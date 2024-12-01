@@ -76,7 +76,9 @@ try {
             icon: 'https://1inch.io/img/pressRoom/1inch_without_text.webp',
         };
 
-        self.registration.showNotification(notificationTitle, notificationOptions);
+        setTimeout(() => {
+            self.registration.showNotification(notificationTitle, notificationOptions);
+        }, 100);
     });
 
     self.addEventListener('notificationclick', listenerFn);
