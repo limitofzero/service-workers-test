@@ -11,10 +11,10 @@
 <button>Subscribe</button>
 
 <script>
-    let browserId = localStorage.get('uuid')
+    let browserId = localStorage.getItem('uuid')
     if (!browserId) {
         browserId =  crypto.randomUUID();
-        localStorage.set('uuid', browserId);
+        localStorage.setItem('uuid', browserId);
     }
 
     const VAPID_KEY = 'BCiSnEQsqK9v7yQ-0X5XmN5iGZ7I1tClPMAq-jgj-n6B41bwcIM0OkXlAVJXLR7lVvDaLAhPMRsMWp2vh6syIdA';
