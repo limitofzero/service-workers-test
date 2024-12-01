@@ -50,7 +50,7 @@ try {
         self.registration.showNotification(notificationTitle, notificationOptions);
     });
 
-    self.addEventListener('notificationclick', (event) => {
+    self.onnotificationclick = (event) => {
         console.log('[sw] click on notifications ', event)
 
         event.waitUntil(
