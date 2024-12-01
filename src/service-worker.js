@@ -54,6 +54,9 @@ try {
         console.log('[sw] click on notifications ', event)
 
         event.waitUntil(
+            console.log("On notification click: ", event.notification.tag);
+            event.notification.close();
+
             clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
                 // eslint-disable-next-line no-console
                 console.log('[sw] clientList', clientList);
