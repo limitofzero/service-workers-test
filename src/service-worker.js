@@ -34,23 +34,7 @@ try {
     const scopeUrl = self.registration.scope;
     const dappOrigin = new URL(scopeUrl).origin;
 
-    messaging.onBackgroundMessage((payload) => {
-        if (payload.data.type !== 'cross-chain') {
-            return;
-        }
-
-        const notificationTitle = 'Title';
-        const url = self.registration.scope;
-        console.log('[sw] : url', url, ' oroigin', dappOrigin);
-        const notificationOptions = {
-            body: 'url: ' + dappOrigin,
-            icon: 'https://1inch.io/img/pressRoom/1inch_without_text.webp',
-        };
-
-        self.registration.showNotification(notificationTitle, notificationOptions);
-    });
-
-    self.onnotificationclick = (event) => {
+    const listenerFn = (event) => {
         console.log('[sw] click on notifications ', event)
         console.log("On notification click: ", event.notification.tag);
         event.notification.close();
@@ -77,6 +61,27 @@ try {
             })
         );
     };
+
+    messaging.onBackgroundMessage((payload) => {
+        if (payload.data.type !== 'cross-chain') {
+            return;
+        }
+
+        const notificationTitle = 'Title';
+        const url = self.registration.scope;
+        console.log('[sw] : url', url, ' oroigin', dappOrigin);
+        const notificationOptions = {
+            body: 'url: ' + dappOrigin,
+            icon: 'https://1inch.io/img/pressRoom/1inch_without_text.webp',
+        };
+
+        self.removeEventListener('notificationclick', listenerFn);
+        self.addEventListener('notificationclick', listenerFn);
+
+        self.registration.showNotification(notificationTitle, notificationOptions);
+    });
+
+
 
 } catch (e) {
     console.error('[sw] : Error importing Firebase SDK', e);
