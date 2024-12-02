@@ -4,6 +4,7 @@ const scopeUrl = self.registration.scope;
 const dappOrigin = new URL(scopeUrl).origin;
 
 self.addEventListener('notificationclick', (event) => {
+    console.log('[sw] notificationclick')
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
             // Check if there is any open dapp tab
@@ -22,10 +23,12 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 self.addEventListener('install', (event) => {
+    console.log('[sw] installing');
     event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', (event) => {
+    console.log('[sw] activating');
     event.waitUntil(clients.claim());
 });
 
@@ -60,6 +63,7 @@ try {
             icon: 'https://1inch.io/img/pressRoom/1inch_without_text.webp',
         };
 
+        console.log('[sw] get showNotification')
         self.registration.showNotification(notificationTitle, notificationOptions);
     });
 } catch (e) {
