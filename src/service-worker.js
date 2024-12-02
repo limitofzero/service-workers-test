@@ -55,11 +55,6 @@ try {
         console.log('[sw] : Activating...');
     });
 
-// Fetch event - Serve cached content
-    self.addEventListener('fetch', (event) => {
-        console.log('[sw]: Fetching', event.request.url);
-    });
-
     const app = firebase.initializeApp(firebaseConfig);
 
     const messaging = firebase.messaging();
