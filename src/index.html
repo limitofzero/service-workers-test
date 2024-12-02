@@ -8,7 +8,8 @@
 <body>
 <h1>Welcome to the Service Worker Example</h1>
 <p>This is a simple demonstration of caching with a service worker.</p>
-<button>Subscribe</button>
+<button #subscribe>Subscribe</button>
+<button #update>Update worker</button>
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js'
 
@@ -60,7 +61,21 @@
             console.error('[main] s are not supported in this browser.');
         }
 
-        document.querySelector('button').addEventListener('click', () => {
+        document.querySelector('#subscribe').addEventListener('click', () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker
+                    .register('./service-worker.js')
+                    .then((reg) => {
+                        return reg.update();
+                    })
+                    .catch((error) => console.error('[main]  Updated Failed:', error))
+                    .then(() => {
+                        console.log('[main]  service worker updated')
+                    });
+            }
+        });
+
+        document.querySelector('#subscribe').addEventListener('click', () => {
             Notification.requestPermission().then((result) => {
                 if (result === 'granted') {
                     initFirebaseBackgroundClient().then((token) => {
