@@ -2,7 +2,6 @@ const scopeUrl = self.registration.scope;
 const dappOrigin = new URL(scopeUrl).origin;
 
 const listenerFn = (event) => {
-    console.log('[sw] click on notifications ', event)
     console.log("On notification click: ", event.notification.tag);
     event.notification.close();
 
