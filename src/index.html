@@ -61,7 +61,7 @@
             console.error('[main] s are not supported in this browser.');
         }
 
-        document.querySelector('#subscribe').addEventListener('click', () => {
+        document.querySelector('#update').addEventListener('click', () => {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker
                     .register('./service-worker.js')
