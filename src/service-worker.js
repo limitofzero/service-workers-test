@@ -1,40 +1,40 @@
+/* eslint-disable no-undef */
+
 const scopeUrl = self.registration.scope;
 const dappOrigin = new URL(scopeUrl).origin;
 
-const listenerFn = (event) => {
-    console.log("On notification click: ", event.notification.tag);
-    event.notification.close();
-
+self.addEventListener('notificationclick', (event) => {
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            // eslint-disable-next-line no-console
-            console.log('[sw] clientList', clientList);
             // Check if there is any open dapp tab
             for (let client of clientList) {
                 if (client.url.includes(dappOrigin) && 'focus' in client) {
-                    // eslint-disable-next-line no-console
-                    console.log('[sw] focus ', client);
                     return client.focus(); // Focus on the existing tab and break out of the loop
                 }
             }
 
             // If no tab is open, open a new one
             if (clients.openWindow) {
-                // eslint-disable-next-line no-console
-                const url = self.registration.scope;
-                console.log('[sw] open ', clients);
-                return clients.openWindow(`${url}`);
+                return clients.openWindow(`${scopeUrl}`);
             }
-        })
+        }),
     );
-};
+});
 
-self.addEventListener('notificationclick', listenerFn);
+self.addEventListener('install', (event) => {
+    event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(clients.claim());
+});
 
 try {
     importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js');
     importScripts('https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging-compat.js');
 
+    // Firebase config is the same for all environments (dev/prod/stage)
+    // and for all contexts (page window context or service worker self context)
     const firebaseConfig = {
         apiKey: 'AIzaSyD6bYLcfnfRApmuxCgOZ1MYp5Z1riFpiwA',
         authDomain: 'oneinch-defi-wallet.firebaseapp.com',
@@ -46,40 +46,22 @@ try {
         measurementId: 'G-0D949TV1F9',
     };
 
-    self.addEventListener('install', (event) => {
-        console.log('[sw] : Installing...');
-    });
-
-// Activate event - Clean up old caches
-    self.addEventListener('activate', (event) => {
-        console.log('[sw] : Activating...');
-    });
-
     const app = firebase.initializeApp(firebaseConfig);
-
     const messaging = firebase.messaging();
-
-
 
     messaging.onBackgroundMessage((payload) => {
         if (payload.data.type !== 'cross-chain') {
             return;
         }
 
-        const notificationTitle = 'Title';
-        const url = self.registration.scope;
-        console.log('[sw] : url', url, ' oroigin', dappOrigin);
-        console.log('isSucureContext', self.isSecureContext);
+        const notificationTitle = '1inch Fusion+ Swap Active';
         const notificationOptions = {
-            body: 'url: ' + dappOrigin,
+            body: 'Keep tab open to complete swap',
             icon: 'https://1inch.io/img/pressRoom/1inch_without_text.webp',
         };
 
-        setTimeout(() => {
-            self.registration.showNotification(notificationTitle, notificationOptions);
-        }, 100);
+        self.registration.showNotification(notificationTitle, notificationOptions);
     });
-
 } catch (e) {
-    console.error('[sw] : Error importing Firebase SDK', e);
+    console.error('Firebase client init error', e);
 }
